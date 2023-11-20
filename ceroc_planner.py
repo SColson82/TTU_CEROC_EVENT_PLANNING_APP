@@ -44,48 +44,65 @@ def create_objects(json_data, object_class):
     objects = []
     # Iterate over the provUIDed data
     for item in json_data:
-        # print(f"Attempting to create object from data: {item}")
-        try:
-            # Use dictionary unpacking to parse data
-            obj = object_class(**item)
-            # Save each data item to the array
-            objects.append(obj)
-        except Exception as e:
-            print(f"Error creating object from data: {item}")
-            print(f"Error details: {e}")
+        # Use dictionary unpacking to parse data
+        obj = object_class(**item)
+        # Save each data item to the array
+        objects.append(obj)
     return objects
+
+def view_objects(objects, object_type):
+    print(f"{object_type}s:")
+    for object in objects:
+        pprint(vars(object))
+
+
 
 def main():
     # Read data from contacts.json using the read_file function
     contacts_data = read_file('contacts.json')
-    # print("Contacts Data from JSON:")
-    # pprint(contacts_data)
+
     # Call the create_objects function on the contacts data
     # and create a Contact object for each contact.
     contact_objects = create_objects(contacts_data, Contact)
-    # print("Contacts Objects:")
-    # pprint(contact_objects)
-    
-    # Print contacts data in a more readable format
-    if contact_objects is not None:
-        print("\n\nContacts:")
-        for item in contact_objects:
-            pprint(vars(item))
-    else:
-        print("Error: contact_objects is None.")
 
     # Read data from the events.json using the read_file function
     events_data = read_file('events.json')
     # Call the create_objects function on the events data 
     events_objects = create_objects(events_data['university_events'], Event)
 
-    # Print events data in a more readable format
-    if events_objects is not None:
-        print("\n\nEvents:")
-        for item in events_objects:
-            pprint(vars(item))
-    else:
-        print("Error: events_objects is None.")
+    while True:
+        menu = """\nMenu:
+1. View Contacts
+2. View Events
+3. Input last date of communication for a contact.
+4. Add action items to an event.
+5. Exit
 
+"""
+        print(menu)
+        
+        choice = input("Enter your choice (1-5): ")
+
+        try:
+            choice = int(choice)
+        except ValueError:
+            print("Invalid input. Please enter a number 1-5.")
+            continue
+        
+        if choice == 1:
+            view_objects(contact_objects, "Contact")
+        elif choice == 2:
+            view_objects(events_objects, "Event")
+        elif choice == 3:
+            print("Fix me.")
+        elif choice == 4:
+            print("Fix me too.")
+        elif choice == 5:
+            print("Exiting program. Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please choose a number between 1 and 5.")
+
+        
 if __name__=="__main__":
     main()
