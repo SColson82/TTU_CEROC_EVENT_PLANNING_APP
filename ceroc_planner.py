@@ -29,6 +29,10 @@ class Event:
         self.StartTime = StartTime
         self.Location = Location
         self.Duration = Duration
+        self.ActionItems = []
+
+    def add_action_item(self, item_name: str, due_date: datetime):
+        self.ActionItems.append({"Name": item_name, "Due Date": due_date})
 
 # Function read_file
 # Input: path to a json file
@@ -60,23 +64,95 @@ def view_objects(objects, object_type):
     for object in objects:
         pprint(vars(object))
 
+# Function update_communication_date
+# Input: contact objects array
+# Output: Updated object with last date of communication noted
 def update_communication_date(contact_objects):
-    email_to_lookup = input("Enter the email of the contact you wish to update: ")
-    found_contact = None
+    # Prompt user for UID or email
+    print("\nEnter the UID or email that you wish to look up: ")
+    # Remove leading or trailing whitespace from user input and store
+    search_item = input().strip()
 
+    found_contact = None
+    # Iterate through contact objects to find the specified contact
     for contact in contact_objects:
-        if contact.EmailAddress == email_to_lookup:
+        # Remove case sensitivity and check if current obj is the search obj
+        if (contact.EmailAddress.lower() == search_item.lower()
+            or str(contact.UID) == search_item):
             found_contact = contact
             break
+    # If contact is found
     if found_contact: 
+        # Display current last date of communication: defaults to none
         last_communication_date = found_contact.LastCommunicationDate
         print(f"Last Date of Communication: {last_communication_date}")
 
+        # Prompt user to update last date of communication
         new_communication_date = input("Enter new last communication date (YYYY-MM-DD): ")
+        # Convert string input to datetime and update the contact object
+        new_communication_date = datetime.strptime(new_communication_date, '%Y-%m-%d').date().strftime('%Y-%m-%d')
         found_contact.LastCommunicationDate = new_communication_date
-        print(f"Updated Last Communication Date: {found_contact.LastCommunicationDate}")
+        
+        # Notify user the object has been updated
+        print(f"\nUpdated Last Communication Date: {found_contact.LastCommunicationDate}")
     else:
-        print(f"Contact with email {email_to_lookup} not found.")
+        # Notify user the object could not be found
+        print(f"Contact with search parameter {search_item} not found.")
+
+# Function action_items
+# Input: event objects array
+# Output: updated event objects with the user's action item and date input
+def action_items(events_objects):
+    # Prompt user for search parameters
+    print("\nEnter the UID, date, or name of the event: ")
+    # Remove leading and trailing white space
+    search_item = input().strip()
+
+    selected_event = None
+    # Iterate over the events object array
+    for event in events_objects:
+        # Check the current object against the search parameters
+        if (
+            str(event.UID) == search_item
+            or event.Date == search_item
+            or event.Name.lower() == search_item.lower()
+        ):
+            selected_event = event
+            break
+    # If the event is found
+    if selected_event:
+        # Display the name of the selected event
+        print(f"\nSelected Event: {selected_event.Name}")
+
+        # Loop to add action items to the chosen event
+        while True:
+            # Collect user input for the name of a single action item, remove leading or trailing whitespace
+            item_name = input("\nEnter the action item (or type 'done' to finish): ").strip()
+            # Check for the exit condition
+            if item_name.lower() == 'done':
+                break
+
+            # Collect input for due date
+            due_date_str =  input("\nEnter the due date (YYYY-MM-DD): ").strip()
+            try: 
+                # Convert string input to datetime object
+                due_date = datetime.strptime(due_date_str, '%Y-%m-%d').date()
+                # Add action item and due date to the event object
+                selected_event.add_action_item(item_name, due_date.strftime('%Y-%m-%d'))
+                # Confirm to user that this has been done
+                print(f"\n\nAction item, {item_name}, added with a due date of {due_date}.")
+            except ValueError:
+                # Error check for correct format
+                print("Invalid date format. Please use YYYY-MM-DD.")
+
+            # Print the list of action items added
+            print(f"\nAction items associated with {selected_event.Name} on {selected_event.Date}: \n")
+            for item in selected_event.ActionItems:
+                print(f"Item: {item['Name']}, Due Date: {item['Due Date']}")
+
+    # Notify user that the requested event has not been found
+    else: 
+        print("Event not found.")
 
 def main():
     # Read data from contacts.json using the read_file function
@@ -129,7 +205,7 @@ def main():
 
         # Add action items
         elif choice == 4:
-            print("Fix me too.")
+            action_items(events_objects)
 
         # Exit
         elif choice == 5:
