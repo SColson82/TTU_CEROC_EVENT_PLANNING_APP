@@ -93,15 +93,39 @@ class EventManager(object):
 
     # This function takes in a UID and returns the Contact object with that UID
     def uid_to_contact(self, uid: int) -> Contact:
-        pass
+        # Iterate through the list of contacts
+        for contact in self.contacts:
+            # Check if the UID of the current item matches the provided UID
+            if contact.UID == uid:
+                # If a match is found, return the 
+                return contact
+        # Return False if it is not
+        return None
+
 
     # This function takes in a UID and returns the Event object with that UID
     def uid_to_event(self, uid: int) -> Event:
-        pass
+        # Iterate through the list of events
+        for event in self.events:
+            # Check if the UID of the current item matches the provided UID
+            if event.UID == uid:
+                # If a match is found, return the event
+                return event
+        # Return False if it is not
+        return None
+
 
     # This function takes in a Contact and an Event and returns whether the contact is attending the event. True or False
     def is_attending(self, c: Contact, e: Event) -> bool:
-        pass
+        # Iterate through the list of event attendees
+        for attendee in self.__event_attendees:
+            # Check if the current attendee is associated with the provided contact and event
+            if attendee.contact == c and attendee.event == e:
+                # If the contact is attending the event, return True
+                return True
+        # Return False if it is not
+        return False
+
 
     # This sorts the contacts in the list by lastname
     def sort_contacts(self):

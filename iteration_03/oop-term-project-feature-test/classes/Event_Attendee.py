@@ -11,8 +11,43 @@ For now, the "memo" attribute is a catch-all for these, but in the future, more 
 
 class Event_Attendee(object):
     # an Event object and Contact object are passed into the constructor, essentially creating a tuple object
-    def __init__(self, e: Event, c: Contact):
-       pass
+    def __init__(self, e: Event, c: Contact, memo: str = ""):
+       self._event = e
+       self._contact = c
+       self._memo = memo
+
+    # getters
+    @property
+    def event(self):
+        return self._event
+    
+    @property
+    def contact(self):
+        return self._contact
+    
+    @property
+    def memo(self):
+        return self._memo
+
+    # setters
+    @event.setter
+    def event(self, e):
+        if isinstance(e, Event):
+            self._event = e
+        else:
+            raise ValueError("This event does not exist.")
+    
+    @contact.setter
+    def contact(self, c):
+        if isinstance(c, Contact):
+            self._contact == c
+        else:
+            raise ValueError("This contact does not exist.")
+    
+    @memo.setter
+    def memo(self, value):
+        self._memo = value
+        #pass
 
     # This function defines what happens when you print the object as text ie print(Event_Attendee)
     # PRINTS IN THE FORM "John Smith attending Data Science League Meeting"
